@@ -20,6 +20,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^12.5",
-        "symfony/property-access": "^7.4"
+        "symfony/property-access": "^7.4",
+        "symfony/http-kernel": "^7.4",
+        "symfony/validator": "^7.4"
     }
 }
