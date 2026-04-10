@@ -64,13 +64,37 @@ All attributes accept optional `name` (defaults to parameter name) and `required
 
 `#[FromPath]` automatically casts values to the parameter's PHP type (`int`, `float`, `bool`, `string`).
 
+## Value Resolver
+
+The bundle includes `RequestMapperValueResolver` which integrates with Symfony's `#[MapQueryString]` and `#[MapRequestPayload]` attributes. This solves the problem where Symfony's default resolver skips mapping entirely when the query string or request body is empty — preventing `FromHeader`, `FromPath` and `FromUploads` attributes from being processed.
+
+```php
+use RequestMapper\Attribute\FromHeader;
+use RequestMapper\Attribute\FromPath;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+
+class ArticleController
+{
+    public function show(#[MapQueryString] GetArticleQuery $query): Response
+    {
+        // Works even when the query string is empty —
+        // FromPath and FromHeader attributes are still resolved.
+    }
+}
+```
+
+The resolver requires `symfony/http-kernel` and `symfony/validator`.
+
 ## Configuration
 
-If Symfony autoconfiguration is enabled, the denormalizer is registered automatically. Otherwise register it manually:
+If Symfony autoconfiguration is enabled, the denormalizer and value resolver are registered automatically. Otherwise register them manually:
 
 ```yaml
 # config/services.yaml
 services:
     RequestMapper\Serializer\RequestMapperDenormalizer:
         tags: ['serializer.normalizer']
+
+    RequestMapper\ArgumentResolver\RequestMapperValueResolver:
+        tags: ['controller.argument_value_resolver']
 ```
