@@ -1,6 +1,16 @@
 # Request Mapper
 
+[![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-8892BF.svg)](https://php.net/)
+[![Tested on PHP 8.5](https://img.shields.io/badge/tested%20on-PHP%208.2%20|%208.3%20|%208.4%20|%208.5-brightgreen.svg)](https://php.net/)
+[![Symfony](https://img.shields.io/badge/symfony-6.4%20|%207.x%20|%208.x-black.svg)](https://symfony.com/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Symfony attributes for mapping HTTP request headers, path parameters and uploaded files to object constructor parameters via the Serializer denormalization pipeline.
+
+## Requirements
+
+- PHP >= 8.2 (tested on 8.2, 8.3, 8.4, 8.5)
+- Symfony 6.4, 7.x or 8.x
 
 ## Installation
 
