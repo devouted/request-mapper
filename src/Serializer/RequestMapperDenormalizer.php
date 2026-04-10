@@ -7,6 +7,7 @@ namespace RequestMapper\Serializer;
 use RequestMapper\Attribute\FromHeader;
 use RequestMapper\Attribute\FromPath;
 use RequestMapper\Attribute\FromUploads;
+use RequestMapper\Exception\MissingRequestValueException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareTrait;
@@ -91,6 +92,8 @@ class RequestMapperDenormalizer implements DenormalizerInterface, DenormalizerAw
 
         if ($value !== null) {
             $data[$param->getName()] = $value;
+        } elseif ($attr->required) {
+            throw new MissingRequestValueException(sprintf('Missing required header "%s".', $name));
         }
 
         return $data;
@@ -110,6 +113,8 @@ class RequestMapperDenormalizer implements DenormalizerInterface, DenormalizerAw
 
         if ($value !== null) {
             $data[$param->getName()] = $this->castToType($value, $param->getType());
+        } elseif ($attr->required) {
+            throw new MissingRequestValueException(sprintf('Missing required path parameter "%s".', $name));
         }
 
         return $data;
@@ -125,7 +130,13 @@ class RequestMapperDenormalizer implements DenormalizerInterface, DenormalizerAw
 
         $attr = $attrs[0]->newInstance();
         $name = $attr->name ?? $param->getName();
-        $data[$param->getName()] = $request->files->all($name);
+        $files = $request->files->all($name);
+
+        if (!empty($files)) {
+            $data[$param->getName()] = $files;
+        } elseif ($attr->required) {
+            throw new MissingRequestValueException(sprintf('Missing required uploaded files for "%s".', $name));
+        }
 
         return $data;
     }
